@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modify HTML and Download</title>
+</head>
+<body>
+    
+  <style>
+    #dropArea {
+
+      border: 2px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+  <div id="dropArea" class="container mt-5 border" ondragenter="handleDragEnter(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+    <p class="m-0">Перетащите сюда файл или кликните для выбора файла.</p>
+  </div>
+
+  <select name="Налог" id="nds-select">
+    <option value="НДС 12%" selected>НДС 12%</option>
+    <option value="Без налога">Без налога</option>
+  </select>
+
+  <script>
+    function handleDragEnter(event) {
+      event.preventDefault();
+      document.getElementById('dropArea').style.border = '2px dashed #333';
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+    }
+
+    function handleDragLeave(event) {
+      event.preventDefault();
+      document.getElementById('dropArea').style.border = '2px dashed #ccc';
+    }
+
+    function handleDrop(event) {
+      event.preventDefault();
+      document.getElementById('dropArea').style.border = '2px dashed #ccc';
+
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        readFile(file);
+      }
+    }
+
+    function modifyAndDownload(content) {
+    let nds = document.getElementById('nds-select').value;
+      const modifiedContent = content.replace(/Без налога/g, nds);
+      const modifiedBlob = new Blob([modifiedContent], { type: 'text/html' });
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(modifiedBlob);
+      downloadLink.download = 'modified_file.html';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+
+    function readFile(file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const content = event.target.result;
+        modifyAndDownload(content);
+      };
+      reader.readAsText(file);
+    }
+  </script>
+
+
+</body>
+</html>
